@@ -1,10 +1,12 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eventsapi.Controllers;
 
+[Authorize]
+[Route("api/[controller]")]
 [ApiController]
-[Route("[controller]")]
 public class EventsController : ControllerBase
 {
     private readonly string FORMAT = "yyyy-MM-ddTHH:mm:ssZ";
