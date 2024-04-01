@@ -17,10 +17,13 @@ function logout(event: Event): void {
       <RouterLink class="nav-link" aria-current="page" to="/login">Login</RouterLink>
     </li>
     <li class="nav-item" v-if="globalStore.isAuthenticated">
-      <a class="nav-link" href="#" @click="(evt) => logout(evt)">Logout</a>
+      <RouterLink class="nav-link" aria-current="page" to="/">Events</RouterLink>
     </li>
     <li class="nav-item">
       <RouterLink class="nav-link" aria-current="page" to="/about">About</RouterLink>
+    </li>
+    <li class="nav-item" v-if="globalStore.isAuthenticated">
+      <a class="nav-link" href="#" @click="(evt) => logout(evt)">Logout</a>
     </li>
   </ul>
 </template>
