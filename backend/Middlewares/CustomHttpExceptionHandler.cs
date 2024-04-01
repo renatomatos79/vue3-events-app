@@ -20,10 +20,10 @@ public class CustomHttpExceptionHandler
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             await context.Response.WriteAsync("Unauthorized.");
         }
-        catch (Exception ex)
+        catch (ArgumentNullException)
         {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsync("Unauthorized access.");
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsync("Missing parameters.");
         }
     }
 }
