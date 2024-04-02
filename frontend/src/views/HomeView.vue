@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, Ref, ref } from 'vue'
+import type {  Ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { loginApi } from '@/helpers/apiClient'
 import { EventResponseModel } from '@/models/event-response.model'
 import { useGlobalStore } from '@/stores/globalStore'

@@ -1,8 +1,11 @@
 import axios from 'axios'
 import { useGlobalStore } from '@/stores/globalStore'
+import { Configs } from '@/configs'
+
+const config = new Configs()
 
 const loginApi = axios.create({
-  baseURL: 'http://localhost:5114/api',
+  baseURL: `${config.baseURL}/api`,
   withCredentials: false,
   headers: {
     Accept: 'application/json',

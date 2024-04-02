@@ -1,0 +1,18 @@
+version: '3'
+networks:
+  ntw_app:
+services:
+    backend:
+        image: rcm-events-backend:1.0.3
+        ports:
+          - 8082:80
+        networks:
+          - ntw_app
+    frontend:
+        image: rcm-events-frontend:1.0.8
+        ports:
+          - 8081:80
+        networks:
+          - ntw_app
+        depends_on:
+          - backend
