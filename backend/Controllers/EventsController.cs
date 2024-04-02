@@ -1,6 +1,8 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using eventsapi;
+using System.Diagnostics.Tracing;
 
 namespace eventsapi.Controllers;
 
@@ -10,85 +12,94 @@ namespace eventsapi.Controllers;
 public class EventsController : ControllerBase
 {
     private readonly string FORMAT = "yyyy-MM-ddTHH:mm:ssZ";
-    public EventsController()
+    private readonly ICacheManager cacheManager;
+    private readonly IHttpContextAccessor httpContextAccessor;
+    
+    private readonly int TWO_MINUTES = 120;
+    private readonly int ONE_DAY = 24 * 60;
+
+    public string UserCacheKey()
     {
+        return this.User?.Identity?.Name ?? "myEvents";        
+    }
+
+    public List<string> UserEvents()
+    {
+        var key = UserCacheKey();
+        // gets the user events
+        return cacheManager.Get<List<string>>(key)?.Item ?? new List<string>();
+    }
+
+    public EventsController(ICacheManager cacheManager, IHttpContextAccessor httpContextAccessor)
+    {
+        this.cacheManager = cacheManager;
+        this.httpContextAccessor = httpContextAccessor;
     }
 
     [HttpGet(Name = "/events")]
-    public IEnumerable<EventResponse> Get()
+    public async Task<IActionResult> Get()
     {
-        return new List<EventResponse>
+        var cache = cacheManager.Get<List<EventResponse>>("events");
+        var result = new List<EventResponse>();
+        if (cache != null && cache.Item != null)
         {
-            new EventResponse {
-                Id = "1",
-                Title = "Introduction to Vue.js",
-                Content = "Join us for an introduction to Vue.js and learn the basics of building web applications with Vue.",
-                Speaker = "John Doe",
-                Date = DateTime.ParseExact("2024-04-01T10:00:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "2",
-                Title = "React Workshop",
-                Content = "Get hands-on experience with React in this workshop. Learn about components, state management, and more.",
-                Speaker = "Jane Smith",
-                Date = DateTime.ParseExact("2024-04-05T13:00:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "3",
-                Title = "Angular Meetup",
-                Content = "Join us for a meetup on Angular. Discover the latest features and best practices.",
-                Speaker = "Michael Johnson",
-                Date = DateTime.ParseExact("2024-04-10T18:30:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "4",
-                Title = "Node.js Conference",
-                Content = "Explore the world of Node.js at our conference. Learn about server-side JavaScript and ecosystem.",
-                Speaker = "Emily Brown",
-                Date = DateTime.ParseExact("2024-04-15T09:00:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "5",
-                Title = "Python Workshop",
-                Content = "Join our Python workshop and dive into the fundamentals of Python programming language.",
-                Speaker = "David Lee",
-                Date = DateTime.ParseExact("2024-04-20T14:00:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "6",
-                Title = "Web Design Masterclass",
-                Content = "Learn the principles of web design and create stunning websites in this masterclass.",
-                Speaker = "Sophia Garcia",
-                Date = DateTime.ParseExact("2024-04-25T11:00:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "7",
-                Title = "UX/UI Seminar",
-                Content = "Discover the world of UX/UI design and learn about user-centered design principles.",
-                Speaker = "Alex Turner",
-                Date = DateTime.ParseExact("2024-04-28T16:30:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "8",
-                Title = "DevOps Conference",
-                Content = "Join us for a conference on DevOps and learn about CI/CD, containerization, and more.",
-                Speaker = "Daniel Wilson",
-                Date = DateTime.ParseExact("2024-05-03T10:00:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "9",
-                Title = "JavaScript Meetup",
-                Content = "Connect with fellow JavaScript developers at our meetup. Share knowledge and network.",
-                Speaker = "Olivia Martinez",
-                Date = DateTime.ParseExact("2024-05-08T19:00:00Z", FORMAT, CultureInfo.InvariantCulture)
-            },
-            new EventResponse {
-                Id = "10",
-                Title = "Data Science Workshop",
-                Content = "Explore the world of data science and learn about machine learning algorithms and data analysis techniques.",
-                Speaker = "William Johnson",
-                Date = DateTime.ParseExact("2024-05-15T15:00:00Z", FORMAT, CultureInfo.InvariantCulture)
-            }
-        };
+          var headers = this.httpContextAccessor.HttpContext?.Response.GetTypedHeaders();
+          if (headers != null) 
+          {
+                headers.CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
+                {
+                    Public = true,
+                    MaxAge = TimeSpan.FromSeconds(cache.MaxAgeInSeconds)
+                };
+          }
+
+          var userEvents = UserEvents();
+          
+          foreach (var item in cache.Item)
+          {
+            item.Subscribed = userEvents.Contains(item.Id);
+          }
+          
+          result = cache.Item;
+        }
+        // if no cache, returns an empty list
+        return await Task.FromResult(Ok(result));
+    }
+
+    [HttpPost(Name = "/events")]
+    public async Task<IActionResult> AddEvents([FromBody] List<EventResponse> events)
+    {
+        if (events == null || !events.Any())
+        {
+          throw new ArgumentNullException("Request is null or invalid.");            
+        }
+        this.cacheManager.Add("events", events, TWO_MINUTES);
+        return await Task.FromResult(NoContent());
+    }
+
+    [HttpPut(Name = "/subscribe/{eventID}")]
+    public async Task<IActionResult> Subscribe([FromRoute] string eventID)
+    {
+        if (string.IsNullOrEmpty(eventID))
+        {
+          throw new ArgumentNullException("Missing event ID.");            
+        }
+        
+        var cache = cacheManager.Get<List<EventResponse>>("events");
+        var selectedEvent = cache.Item.FirstOrDefault(evt => evt.Id == eventID);
+        if (selectedEvent == null)
+        {
+            return StatusCode(404, "EventID not found.");
+        }
+
+        // gets the user events
+        var events = UserEvents();
+        events.Add(eventID);
+        
+        // updates cache
+        this.cacheManager.Add(UserCacheKey(), events, ONE_DAY);
+
+        // returns the selected event
+        return await Task.FromResult(Ok(selectedEvent));
     }
 }

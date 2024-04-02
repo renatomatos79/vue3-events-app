@@ -2,8 +2,11 @@ using System.Text;
 using eventsapi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using ServiceStack.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
 builder.Services.AddScoped<ITokenService, TokenService>(sp =>
@@ -13,6 +16,14 @@ builder.Services.AddScoped<ITokenService, TokenService>(sp =>
         issuer: builder.Configuration["Jwt:Issuer"],
         audience: builder.Configuration["Jwt:Audience"]
     );
+});
+
+// Add REDIS service
+builder.Services.AddSingleton<ICacheManager>(sp =>
+{
+    var host = Environment.GetEnvironmentVariable("REDIS_HOST") ?? "redisserver:6379";
+    var redisClient = new RedisManagerPool(host);
+    return new CacheManager(redisClient);
 });
 
 builder.Services.AddAuthentication(options =>
