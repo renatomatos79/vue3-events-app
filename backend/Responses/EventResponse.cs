@@ -2,7 +2,7 @@ namespace eventsapi;
 
 public class EventResponse
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
     public string Title { get; set; }
     public string Content { get; set; }
     public string Speaker { get; set; }
@@ -11,7 +11,7 @@ public class EventResponse
     
     public EventResponse()
     {
-        this.Id = string.Empty;    
+        this.Id = 0;    
         this.Title = string.Empty;    
         this.Content = string.Empty;    
         this.Speaker = string.Empty;            

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eventsapi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api")]
 public class LoginController : ControllerBase
 {
     private readonly ITokenService tokenService;
@@ -12,17 +12,20 @@ public class LoginController : ControllerBase
         this.tokenService = tokenService;
     }
 
-    [HttpPost(Name = "/token")]
+    [HttpPost("token")]
     public string Token([FromBody] LoginRequest request)
     {
         if (request == null || string.IsNullOrEmpty(request.userName) || string.IsNullOrEmpty(request.password))
         {
             throw new ArgumentNullException("Request is null or invalid.");
         }
-        if (!(request?.userName == "renatomatos79" && request?.password == "123456"))
+        
+        var user = GlobalConstants.Users.FirstOrDefault(u => u.Username == request.userName && u.Password == request.password);
+        if (user == null)
         {
             throw new UnauthorizedAccessException("User is not authenticated.");
         }
-        return tokenService.GenerateToken(request.userName, "Admin");
+
+        return tokenService.GenerateToken(user.Id, user.Name, user.Role);
     }
 }

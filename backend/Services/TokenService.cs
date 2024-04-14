@@ -17,14 +17,15 @@ public class TokenService : ITokenService
         _audience = audience;
     }
 
-    public string GenerateToken(string userId, string role)
+    public string GenerateToken(string userId, string userName, string role)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, userId),
+            new Claim(ClaimTypes.Sid, userId),
+            new Claim(ClaimTypes.NameIdentifier, userName),
             new Claim(ClaimTypes.Role, role)
         };
 
@@ -38,5 +39,10 @@ public class TokenService : ITokenService
 
         var tokenHandler = new JwtSecurityTokenHandler();
         return tokenHandler.WriteToken(token);
+    }
+
+    public string GetUserName(ClaimsPrincipal user) 
+    {
+        return user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
     }
 }

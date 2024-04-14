@@ -1,47 +1,43 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using eventsapi;
-using System.Diagnostics.Tracing;
 
 namespace eventsapi.Controllers;
 
 [Authorize]
-[Route("api/[controller]")]
+[Route("api")]
 [ApiController]
 public class EventsController : ControllerBase
 {
-    private readonly string FORMAT = "yyyy-MM-ddTHH:mm:ssZ";
+    private readonly ITokenService tokenService;
     private readonly ICacheManager cacheManager;
     private readonly IHttpContextAccessor httpContextAccessor;
     
-    private readonly int TWO_MINUTES = 120;
-    private readonly int ONE_DAY = 24 * 60;
-
-    public string UserCacheKey()
+    private string UserCacheKey()
     {
-        return this.User?.Identity?.Name ?? "myEvents";        
+        var userName = tokenService.GetUserName(this.User);
+        return $"${GlobalConstants.REDIS_USER_EVENTS_KEY}_${userName}";
     }
 
-    public List<string> UserEvents()
+    private List<string> UserEvents()
     {
         var key = UserCacheKey();
-        // gets the user events
-        return cacheManager.Get<List<string>>(key)?.Item ?? new List<string>();
+        var cache = cacheManager.Get<List<string>>(key);
+        return cache?.Item ?? new List<string>();
     }
 
-    public EventsController(ICacheManager cacheManager, IHttpContextAccessor httpContextAccessor)
+    public EventsController(ITokenService tokenService, ICacheManager cacheManager, IHttpContextAccessor httpContextAccessor)
     {
+        this.tokenService = tokenService;
         this.cacheManager = cacheManager;
         this.httpContextAccessor = httpContextAccessor;
     }
 
-    [HttpGet(Name = "/events")]
+    [HttpGet("events")]
     public async Task<IActionResult> Get()
     {
-        var cache = cacheManager.Get<List<EventResponse>>("events");
+        var cache = cacheManager.Get<List<EventResponse>>(GlobalConstants.REDIS_EVENTS_KEY);
         var result = new List<EventResponse>();
-        if (cache != null && cache.Item != null)
+        if (cache?.Item != null)
         {
           var headers = this.httpContextAccessor.HttpContext?.Response.GetTypedHeaders();
           if (headers != null) 
@@ -57,7 +53,7 @@ public class EventsController : ControllerBase
           
           foreach (var item in cache.Item)
           {
-            item.Subscribed = userEvents.Contains(item.Id);
+            item.Subscribed = userEvents.Any(a => a == item.Id.ToString());
           }
           
           result = cache.Item;
@@ -66,38 +62,45 @@ public class EventsController : ControllerBase
         return await Task.FromResult(Ok(result));
     }
 
-    [HttpPost(Name = "/events")]
-    public async Task<IActionResult> AddEvents([FromBody] List<EventResponse> events)
+    [HttpPost("events")]
+    public async Task<IActionResult> AddEvents([FromBody] EventRequest request)
     {
-        if (events == null || !events.Any())
+        if (request == null || !(request.Events?.Any() ?? false))
         {
           throw new ArgumentNullException("Request is null or invalid.");            
         }
-        this.cacheManager.Add("events", events, TWO_MINUTES);
+        this.cacheManager.Add(GlobalConstants.REDIS_EVENTS_KEY, request.Events, request.Timeout ?? GlobalConstants.TWO_MINUTES);
         return await Task.FromResult(NoContent());
     }
 
-    [HttpPut(Name = "/subscribe/{eventID}")]
-    public async Task<IActionResult> Subscribe([FromRoute] string eventID)
+    [HttpPut("events/{id}/subscribe")]
+    public async Task<IActionResult> Subscribe(int id, [FromBody] EventSubscribeRequest request)
     {
-        if (string.IsNullOrEmpty(eventID))
+        if (id <= 0)
         {
-          throw new ArgumentNullException("Missing event ID.");            
+          throw new ArgumentNullException("Missing event ID or invalid content (Id <= 0).");
         }
         
-        var cache = cacheManager.Get<List<EventResponse>>("events");
-        var selectedEvent = cache.Item.FirstOrDefault(evt => evt.Id == eventID);
+        var cache = cacheManager.Get<List<EventResponse>>(GlobalConstants.REDIS_EVENTS_KEY);
+        var events = cache?.Item ?? new List<EventResponse>();
+        var selectedEvent = events.FirstOrDefault(evt => evt.Id == id);
         if (selectedEvent == null)
         {
             return StatusCode(404, "EventID not found.");
         }
 
-        // gets the user events
-        var events = UserEvents();
-        events.Add(eventID);
-        
-        // updates cache
-        this.cacheManager.Add(UserCacheKey(), events, ONE_DAY);
+        // user events
+        var userEvents = UserEvents();
+        userEvents.Add(id.ToString());
+
+        // cache update
+        var timeout = request?.Timeout ?? 0;
+        var maxTimeout = timeout > 0 ? timeout : GlobalConstants.ONE_DAY;
+
+        this.cacheManager.Add<List<string>>(UserCacheKey(), userEvents, maxTimeout);
+
+        // set the event as subscribed
+        selectedEvent.Subscribed = true;
 
         // returns the selected event
         return await Task.FromResult(Ok(selectedEvent));
