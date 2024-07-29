@@ -4,6 +4,7 @@ export class EventResponseModel {
   content: string = ''
   speaker: string = ''
   date: string = ''
+  subscribed: boolean = false
 
   constructor(payload?: Partial<EventResponseModel> | null) {
     this.id = payload?.id ?? ''
@@ -11,5 +12,6 @@ export class EventResponseModel {
     this.content = payload?.content ?? ''
     this.speaker = payload?.speaker ?? ''
     this.date = payload?.date ?? ''
+    this.subscribed = payload?.subscribed ?? false
   }
 }
