@@ -28,12 +28,14 @@ client.interceptors.response.use(
 )
 
 function getEventsMock(token: string): { data: EventResponseModel[] | null, error: string | null } {
-  return { data: [
-    new EventResponseModel({ id: '1', title: 'title-1', content: 'content-1', speaker: 'speaker-1', date: '2021-01-01' }),
-    new EventResponseModel({ id: '2', title: 'title-2', content: 'content-2', speaker: 'speaker-2', date: '2021-01-01' }),
-    new EventResponseModel({ id: '3', title: 'title-3', content: 'content-3', speaker: 'speaker-3', date: '2021-01-01' }),
-    new EventResponseModel({ id: '4', title: 'title-4', content: 'content-4', speaker: 'speaker-4', date: '2021-01-01' }),
-  ], error: null}
+  const events = []
+  let count = 1
+  while (events.length < 100) {
+    events.push(new EventResponseModel({ id: count.toString(), title: `title-${count}`, content: `content-${count}`, speaker: `speaker-${count}`, date: '2021-01-01' }))
+    count++
+  }
+  
+  return { data: events, error: null}
 }
 
 
