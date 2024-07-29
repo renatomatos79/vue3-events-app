@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { GlobalStateModel } from '@/models/global-state.model'
+import { GlobalStateModel } from '@/types/models/global-state.model'
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({ ...new GlobalStateModel() }),

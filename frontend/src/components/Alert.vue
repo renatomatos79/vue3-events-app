@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-interface Props {
-  message: String
+type Props {
+  message?: String
   type?: String
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  message: () => '',
   type: () => 'danger'
 })
 

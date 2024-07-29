@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 
 // Composables
-import { useAuthentication } from '@/composables/useAuthentication'
+import { useAuthentication } from '@/composables'
 
 // Stores
 import { useGlobalStore } from '@/stores/globalStore'
@@ -10,19 +10,24 @@ import { useGlobalStore } from '@/stores/globalStore'
 // Components
 import Alert from '@/components/Alert.vue'
 
+// Types
+import {  AUTH_DEFAULT_PASSWORD, AUTH_DEFAULT_USERNAME } from '@/types/constants/auth-constants'
+
 // Define events
-const emit = defineEmits(['login'])
+const emit = defineEmits<{
+  login: [token: string]
+}>()
 
 // Init
-const { login, token } = useAuthentication()
-const username = ref('renatomatos79')
-const password = ref('123456')
+const { auth, token } = useAuthentication()
+const username = ref(AUTH_DEFAULT_USERNAME)
+const password = ref(AUTH_DEFAULT_PASSWORD)
 const globalStore = useGlobalStore()
 
-async function doLogin() {
-  await login(username.value, password.value)
+async function handleLogin() {
+  await auth(username.value, password.value)
   if (token.value) {
-    emit('login', token)
+    emit('login', String(token.value ?? ''))
   }
 }
 </script>
@@ -34,7 +39,7 @@ async function doLogin() {
         <div class="card">
           <div class="card-header">Login</div>
           <div class="card-body">
-            <form @submit.prevent="doLogin">
+            <form @submit.prevent="handleLogin">
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="username" v-model="username" />

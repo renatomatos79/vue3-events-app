@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { EventResponseModel } from '@/models/event-response.model'
+// Types
+import { EventResponseModel } from '@/types'
 
-defineProps({
+type Props = {
   eventInfo: EventResponseModel
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  eventInfo: () => new EventResponseModel()
 })
 </script>
 

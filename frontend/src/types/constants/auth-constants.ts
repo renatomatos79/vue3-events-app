@@ -1,0 +1,6 @@
+export const AUTH_MISSING_PARAMETERS = 'Missing parameters'
+export const AUTH_INVALID_CREDENTIALS = 'Invalid credentials'
+export const AUTH_FAILURE = 'Authentication failure'
+export const AUTH_SOMETHING_WENT_WRONG = 'Oops! Something went wrong!'
+export const AUTH_DEFAULT_USERNAME = 'renatomatos79'
+export const AUTH_DEFAULT_PASSWORD = '123456'

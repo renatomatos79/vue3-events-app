@@ -5,7 +5,7 @@ export class EventResponseModel {
   speaker: string = ''
   date: string = ''
 
-  constructor(payload: Partial<EventResponseModel> | null) {
+  constructor(payload?: Partial<EventResponseModel> | null) {
     this.id = payload?.id ?? ''
     this.title = payload?.title ?? ''
     this.content = payload?.content ?? ''
