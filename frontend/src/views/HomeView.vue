@@ -2,11 +2,11 @@
 // Modules
 import  {  type Ref, onMounted, ref } from 'vue'
 
-// Store
-import { useGlobalStore } from '@/stores/globalStore'
+// Components
+import Event from '@/components/Event.vue'
 
 // Composables
-import { useEvents } from '@/composables/useEvents'
+import { useEvents } from '@/composables'
 
 // Init
 const { events, loadEvents } = useEvents()
@@ -30,4 +30,3 @@ async function loadAllEvents() {
     </div>
   </div>
 </template>
-@/composables/useEvents/useEvents

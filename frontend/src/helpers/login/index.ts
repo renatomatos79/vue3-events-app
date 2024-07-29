@@ -5,7 +5,7 @@ import axios from 'axios'
 import { Configs } from '@/configs'
 
 // Types
-import { AUTH_DEFAULT_PASSWORD, AUTH_DEFAULT_USERNAME, AUTH_FAILURE, AUTH_INVALID_CREDENTIALS, AUTH_MISSING_PARAMETERS, AUTH_SOMETHING_WENT_WRONG } from '@/types/constants/auth-constants'
+import { AUTH_DEFAULT_PASSWORD, AUTH_DEFAULT_TOKEN, AUTH_DEFAULT_USERNAME, AUTH_FAILURE, AUTH_INVALID_CREDENTIALS, AUTH_MISSING_PARAMETERS, AUTH_SOMETHING_WENT_WRONG } from '@/types/constants/auth-constants'
 
 // Gets config instance
 const config = new Configs()
@@ -36,11 +36,13 @@ function loginMock(username: string, password: string): { data: string | null, e
     return { data: null, error: AUTH_INVALID_CREDENTIALS }
   }
 
-  return { data: '', error: null }
+  return { data: AUTH_DEFAULT_TOKEN, error: null }
 }
 
 
 async function login(username: string, password: string): Promise<{ data: string | null, error: string | null }> {
+  console.log('login.config.isMock: ', config.isMock)
+  
   if (config.isMock) {
     return loginMock(username, password)
   }

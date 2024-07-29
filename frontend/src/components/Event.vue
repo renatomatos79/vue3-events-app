@@ -2,11 +2,12 @@
 // Types
 import { EventResponseModel } from '@/types'
 
-type Props = {
-  eventInfo: EventResponseModel
+// Define component props
+type ComponentProps = {
+  eventInfo?: EventResponseModel
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ComponentProps>(), {
   eventInfo: () => new EventResponseModel()
 })
 </script>

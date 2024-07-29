@@ -1,4 +1,4 @@
 export class GlobalStateModel {
-  errorMessage: string = ''
-  token: string | null = null
+  errorMessage?: string 
+  token?: string | null 
 }

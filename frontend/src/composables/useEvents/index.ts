@@ -10,14 +10,11 @@ import { useGlobalStore } from '@/stores/globalStore'
 // Types
 import { EventResponseModel } from '@/types'
 
-// Get store instance
-const globalStore = useGlobalStore()
-
 export function useEvents() {
+  const globalStore = useGlobalStore()
   const events = ref<EventResponseModel[]>([])
 
   async function loadEvents(): Promise<void> {    
-    globalStore.resetData()
     events.value = []
     // get events
     const response = await getEvents(globalStore.token ?? '')
@@ -25,7 +22,7 @@ export function useEvents() {
     if (response.data != null && response.error === null) {
       events.value = response.data
     } else {
-      globalStore.setErrorMessage(response.error ?? '')
+      globalStore.errorMessage = response.error ?? ''
     }
   }
 

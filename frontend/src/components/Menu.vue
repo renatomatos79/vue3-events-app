@@ -1,10 +1,22 @@
 <script setup lang="ts">
-import { useGlobalStore } from '@/stores/globalStore'
+// Modules
 import router from '@/router'
+import { computed } from 'vue';
 
+// Stores
+import { useGlobalStore } from '@/stores/globalStore'
+
+// Instances
 const globalStore = useGlobalStore()
 
-function logout(event: Event): void {
+const isAuthenticated = computed(() => {
+  console.log('isAuthenticated.globalStore.token: ', globalStore.token ?? '')
+  const isAuth = (globalStore.token ?? '').trim() !== ''
+  console.log('isAuthenticated.isAuth: ', isAuth)
+  return isAuth
+})
+
+function handleLogout(event: Event): void {
   event.preventDefault()
   globalStore.resetData()
   router.push({ name: 'login' })
@@ -13,19 +25,19 @@ function logout(event: Event): void {
 
 <template>
   <ul class="nav justify-content-end">
-    <li class="nav-item" v-if="!globalStore.isAuthenticated">
+    <li class="nav-item" v-if="!isAuthenticated">
       <RouterLink class="nav-link" aria-current="page" to="/login">Login</RouterLink>
     </li>
-    <li class="nav-item" v-if="globalStore.isAuthenticated">
+    <li class="nav-item" v-if="isAuthenticated">
       <RouterLink class="nav-link" aria-current="page" to="/">Events</RouterLink>
     </li>
     <li class="nav-item">
       <RouterLink class="nav-link" aria-current="page" to="/about">About</RouterLink>
     </li>
-    <li class="nav-item" v-if="globalStore.isAuthenticated">
-      <a class="nav-link" href="#" @click="(evt) => logout(evt)">Logout</a>
+    <li class="nav-item" v-if="isAuthenticated">
+      <a class="nav-link" href="#" @click="(evt) => handleLogout(evt)">Logout</a>
     </li>
   </ul>
 </template>
 
-<style scoped></style>
+

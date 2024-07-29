@@ -2,7 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_BASE_URL: string
-  readonly IS_MOCK: bollean
+  readonly VITE_APP_IS_MOCK: boolean
 }
   
 interface ImportMeta {
