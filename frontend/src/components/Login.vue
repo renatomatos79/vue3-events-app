@@ -5,7 +5,7 @@ import { ref } from 'vue'
 import { useAuthentication } from '@/composables'
 
 // Stores
-import { useGlobalStore } from '@/stores/globalStore'
+import { useGlobalStore } from '@/stores'
 
 // Components
 import Alert from '@/components/Alert.vue'

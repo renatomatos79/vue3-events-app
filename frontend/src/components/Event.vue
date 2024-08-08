@@ -1,7 +1,6 @@
 <script setup lang="ts">
 // Types
 import { EventResponseModel } from '@/types'
-import { subscribe } from 'diagnostics_channel';
 
 // Define component props
 type ComponentProps = {

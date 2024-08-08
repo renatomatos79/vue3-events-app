@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Modules
-import  {  type Ref, onMounted, ref } from 'vue'
+import  { onMounted } from 'vue'
 
 // Components
 import Event from '@/components/Event.vue'
@@ -8,25 +8,31 @@ import Event from '@/components/Event.vue'
 // Composables
 import { useEvents } from '@/composables'
 
+// Stores
+import { useGlobalStore, useEventStore } from '@/stores'
+
 // Types
 import { EventResponseModel } from '@/types'
 
 // Init
 const { events, loadEvents } = useEvents()
+const eventStore = useEventStore()
+const globalStore = useGlobalStore()
 
 onMounted(async () => {
   console.log('onMounted...')
   await loadAllEvents()
 })
 
-
 async function loadAllEvents() {
   await loadEvents()
   console.log('data: ', events.value)
 }
 
-function handleSubscribe(event: EventResponseModel): void {
-  event.subscribed = true
+async function handleSubscribe(event: EventResponseModel): Promise<void> {
+  const token = globalStore.token ?? ''
+  eventStore.register(token, event)
+  event.subscribed = eventStore.isRegistered(token, event.id)
 }
 </script>
 

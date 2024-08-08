@@ -7,6 +7,9 @@ import { Configs } from '@/configs'
 // Types
 import { EventResponseModel, AUTH_FAILURE } from '@/types'
 
+// Stores
+import { useEventStore } from '@/stores/eventStore'
+
 // Gets config instance
 const config = new Configs()
 
@@ -28,10 +31,26 @@ client.interceptors.response.use(
 )
 
 function getEventsMock(token: string): { data: EventResponseModel[] | null, error: string | null } {
+  const eventStore = useEventStore()
   const events = []
   let count = 1
+
   while (events.length < 100) {
-    events.push(new EventResponseModel({ id: count.toString(), title: `title-${count}`, content: `content-${count}`, speaker: `speaker-${count}`, date: '2021-01-01' }))
+    const eventId = count.toString()
+    
+    // check if event was already subscribed
+    const isSubscribed = eventStore.isRegistered(token, eventId)
+    
+    // add event to the list
+    events.push(new EventResponseModel({ 
+      id: eventId, 
+      title: `title-${count}`, 
+      content: `content-${count}`, 
+      speaker: `speaker-${count}`, 
+      date: '2021-01-01', 
+      subscribed: isSubscribed 
+    }))
+
     count++
   }
   

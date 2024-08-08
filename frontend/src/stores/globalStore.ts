@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 // Types
 import { GlobalStateModel } from '@/types'
 
-export const useGlobalStore = defineStore('global', {
+export const useGlobalStore = defineStore('globalStore', {
   state: () => ({ ...new GlobalStateModel() }),
   actions: {
     resetData() {

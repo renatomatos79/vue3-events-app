@@ -4,21 +4,21 @@ import router from '@/router'
 import { computed } from 'vue';
 
 // Stores
-import { useGlobalStore } from '@/stores/globalStore'
+import { useGlobalStore, useEventStore } from '@/stores'
 
 // Instances
 const globalStore = useGlobalStore()
+const eventStore = useEventStore()
 
 const isAuthenticated = computed(() => {
-  console.log('isAuthenticated.globalStore.token: ', globalStore.token ?? '')
   const isAuth = (globalStore.token ?? '').trim() !== ''
-  console.log('isAuthenticated.isAuth: ', isAuth)
   return isAuth
 })
 
 function handleLogout(event: Event): void {
   event.preventDefault()
   globalStore.resetData()
+  eventStore.resetData()
   router.push({ name: 'login' })
 }
 </script>
