@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ServiceStack.Redis;
 
+const string ALLOW_ANY_REQUEST = "ALLOW_ALL";
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
@@ -57,11 +59,9 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy(ALLOW_ANY_REQUEST, builder =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        builder.WithOrigins("*").AllowAnyHeader().WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     });
 });
 
@@ -111,6 +111,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Use CORS middleware
-app.UseCors("AllowAll");
+app.UseCors(ALLOW_ANY_REQUEST);
 
 app.Run();

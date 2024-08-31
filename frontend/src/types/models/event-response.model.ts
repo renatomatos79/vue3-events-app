@@ -1,5 +1,5 @@
 export class EventResponseModel {
-  id: string = ''
+  id: string | number = ''
   title: string = ''
   content: string = ''
   speaker: string = ''
@@ -7,7 +7,7 @@ export class EventResponseModel {
   subscribed: boolean = false
 
   constructor(payload?: Partial<EventResponseModel> | null) {
-    this.id = payload?.id ?? ''
+    this.id = String(payload?.id ?? '')
     this.title = payload?.title ?? ''
     this.content = payload?.content ?? ''
     this.speaker = payload?.speaker ?? ''

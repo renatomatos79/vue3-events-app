@@ -1,6 +1,87 @@
-# my-vue-app
+# vue3-events-app-v2.....
+
+This template should help get you started developing with Vue 3 in Vite........
+
+## Recommended IDE Setup
+
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+
+## Type Support for `.vue` Imports in TS
+
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vitejs.dev/config/).
+
+## Project Setup
 
 ```sh
-docker image build -t rcm-events-frontend:1.0.8 .
-docker container run -d --name rcm-events-frontend -p 8081:80 rcm-events-frontend:1.0.7
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+### Type-Check, Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+### Run Unit Tests with [Vitest](https://vitest.dev/)
+
+```sh
+npm run test:unit
+```
+
+### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
+
+```sh
+npm run test:e2e:dev
+```
+
+This runs the end-to-end tests against the Vite development server.
+It is much faster than the production build.
+
+But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
+
+```sh
+npm run build
+npm run test:e2e
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```
+
+### Api Requests
+
+Using Visual Studio Code, install Thunder Client extension and run the commands right below
+
+### Get admin token
+
+```sh
+POST http://localhost:5114/api/token
+content-type: application/json
+{
+    "username": "admin",
+    "password": "admin"
+}
+```
+
+### Get user token
+
+```sh
+POST http://localhost:5114/api/token
+content-type: application/json
+{
+    "username": "renato",
+    "password": "renato"
+}
 ```

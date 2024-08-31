@@ -1,0 +1,29 @@
+trigger:
+- master
+
+pool: "Renato Laptop"
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x' # Node.js version
+    displayName: 'Install Node.js'
+
+  - script: |
+      npm install
+      npx cypress install
+    displayName: 'Install npm packages and Cypress'
+    
+  - script: |
+      npm run build-only-mock
+    displayName: 'Building project using build-only-mock'
+
+  - script: |
+      npm run test:e2e
+    displayName: 'Run Cypress tests - using test:e2e'
+  
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/results/*.xml'
+      failTaskOnFailedTests: true
+    displayName: 'Publish Cypress test results'

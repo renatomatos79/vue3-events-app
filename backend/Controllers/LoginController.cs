@@ -15,9 +15,9 @@ public class LoginController : ControllerBase
     [HttpPost("token")]
     public string Token([FromBody] LoginRequest request)
     {
-        if (request == null || string.IsNullOrEmpty(request.userName) || string.IsNullOrEmpty(request.password))
+        if (request == null || !request.isValid())
         {
-            throw new ArgumentNullException("Request is null or invalid.");
+            throw new ArgumentNullException("Request is not valid.");
         }
         
         var user = GlobalConstants.Users.FirstOrDefault(u => u.Username == request.userName && u.Password == request.password);

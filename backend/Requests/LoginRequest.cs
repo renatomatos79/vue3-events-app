@@ -1,3 +1,5 @@
+using ServiceStack.Web;
+
 namespace eventsapi;
 
 public class LoginRequest
@@ -9,5 +11,10 @@ public class LoginRequest
     {
         this.userName = string.Empty;
         this.password = string.Empty;
+    }
+
+    public bool isValid() 
+    {
+        return !string.IsNullOrEmpty(this.userName) && !string.IsNullOrEmpty(this.password);
     }
 }

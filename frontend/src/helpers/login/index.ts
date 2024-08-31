@@ -1,33 +1,27 @@
-// Modules
-import axios from 'axios'
-
 // Configs
 import { Configs } from '@/configs'
 
+// Helpers
+import { httpClient } from '@/helpers'
+
 // Types
-import { AUTH_DEFAULT_PASSWORD, AUTH_DEFAULT_TOKEN, AUTH_DEFAULT_USERNAME, AUTH_FAILURE, AUTH_INVALID_CREDENTIALS, AUTH_MISSING_PARAMETERS, AUTH_SOMETHING_WENT_WRONG } from '@/types/constants/auth-constants'
+import {
+  AUTH_DEFAULT_PASSWORD,
+  AUTH_DEFAULT_TOKEN,
+  AUTH_DEFAULT_USERNAME,
+  AUTH_FAILURE,
+  AUTH_INVALID_CREDENTIALS,
+  AUTH_MISSING_PARAMETERS,
+  AUTH_SOMETHING_WENT_WRONG
+} from '@/types/constants/auth-constants'
 
 // Gets config instance
 const config = new Configs()
 
-// Gets axios instance
-const client = axios.create({
-  baseURL: `${config.baseURL}/api`,
-  withCredentials: false,
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json'
-  }
-})
-
-// Add a response interceptor
-client.interceptors.response.use(
-  (response) => {
-    return response
-  }  
-)
-
-function loginMock(username: string, password: string): { data: string | null, error: string | null } {
+function loginMock(
+  username: string,
+  password: string
+): { data: string | null; error: string | null } {
   if ((username ?? '').trim() === '' || (password ?? '').trim() === '') {
     return { data: null, error: AUTH_MISSING_PARAMETERS }
   }
@@ -39,16 +33,16 @@ function loginMock(username: string, password: string): { data: string | null, e
   return { data: AUTH_DEFAULT_TOKEN, error: null }
 }
 
-
-async function login(username: string, password: string): Promise<{ data: string | null, error: string | null }> {
-  console.log('login.config.isMock: ', config.isMock)
-  
+async function login(
+  username: string,
+  password: string
+): Promise<{ data: string | null; error: string | null }> {
   if (config.isMock) {
     return loginMock(username, password)
   }
-  
+
   try {
-    const response = await client.post('/login', {
+    const response = await httpClient({ config }).post('/token', {
       userName: username,
       password: password
     })
@@ -61,7 +55,7 @@ async function login(username: string, password: string): Promise<{ data: string
       return { data: null, error: AUTH_SOMETHING_WENT_WRONG }
     }
   } catch (e) {
-    const error = e as unknown as Error
+    const error = e as Error
     if (error.message.includes('401')) {
       return { data: null, error: AUTH_FAILURE }
     }
@@ -72,4 +66,4 @@ async function login(username: string, password: string): Promise<{ data: string
   return { data: null, error: null }
 }
 
- export { login }
+export { login }

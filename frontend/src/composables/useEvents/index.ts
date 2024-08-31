@@ -14,7 +14,7 @@ export function useEvents() {
   const globalStore = useGlobalStore()
   const events = ref<EventResponseModel[]>([])
 
-  async function loadEvents(): Promise<void> {    
+  async function loadEvents(): Promise<void> {
     events.value = []
     // get events
     const response = await getEvents(globalStore.token ?? '')

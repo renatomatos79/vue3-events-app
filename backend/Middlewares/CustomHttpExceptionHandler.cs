@@ -24,6 +24,6 @@ public class CustomHttpExceptionHandler
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsync("Missing parameters.");
-        }
+        }        
     }
 }

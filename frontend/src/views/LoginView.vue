@@ -11,9 +11,7 @@ import Login from '@/components/Login.vue'
 const globalStore = useGlobalStore()
 
 function handleLogin(token: string) {
-  console.log('handleLogin.token: ', token)
   globalStore.token = token
-  console.log('handleLogin.globalStore.token: ', globalStore.token)
   router.push({ name: 'home' })
 }
 </script>

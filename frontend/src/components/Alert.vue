@@ -3,8 +3,8 @@ import { computed } from 'vue'
 
 // Define component props
 type ComponentProps = {
-  message?: String
-  type?: String
+  message?: string
+  type?: string
 }
 
 const props = withDefaults(defineProps<ComponentProps>(), {

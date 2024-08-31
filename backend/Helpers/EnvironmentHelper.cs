@@ -10,7 +10,7 @@ public static class EnvironmentHelper {
         } 
         catch (Exception ex) 
         {
-            Console.WriteLine($"EnvironmentHelper.GetValue VariableName: ${variableName} SettingsKey: ${settingsKey} Error: ${ex}");
+            Console.WriteLine($"EnvironmentHelper.GetValue VariableName: {variableName} SettingsKey: {settingsKey} Error: {ex}");
         }
         return defaultValue;
         

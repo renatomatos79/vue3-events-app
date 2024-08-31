@@ -13,10 +13,15 @@ const props = withDefaults(defineProps<ComponentProps>(), {
 
 const emit = defineEmits<{
   subscribe: [event: EventResponseModel]
+  unsubscribe: [event: EventResponseModel]
 }>()
 
 function handleSubscribe(): void {
-  emit('subscribe', props.eventInfo)
+  if (props.eventInfo.subscribed) {
+    emit('unsubscribe', props.eventInfo)
+  } else {
+    emit('subscribe', props.eventInfo)
+  }
 }
 </script>
 
@@ -29,18 +34,14 @@ function handleSubscribe(): void {
       <p class="card-text">
         {{ eventInfo?.content }}
       </p>
-      <a href="#" class="btn btn-primary" @click="handleSubscribe" :class="{ isDisabled: eventInfo.subscribed }">
-        {{ eventInfo.subscribed ? 'Subscribed !!' : 'Subscribe' }}
+      <a
+        href="#"
+        class="btn"
+        @click="handleSubscribe"
+        :class="{ 'btn-primary': !eventInfo.subscribed, 'btn-danger': eventInfo.subscribed }"
+      >
+        {{ eventInfo.subscribed ? 'Unsubscribe' : 'Subscribe' }}
       </a>
     </div>
   </div>
 </template>
-
-<style scoped>
-.isDisabled {
-  cursor: not-allowed;
-  opacity: 0.7;
-  text-decoration: none; 
-  color: yellow;
-}
-</style>
