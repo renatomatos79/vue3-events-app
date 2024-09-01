@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev-localhost": "vite --mode localhost",
+    "dev-localhost80": "vite --mode localhost80",
     "dev-mock": "vite --mode mock",
     "build": "run-p type-check \"build-only {@}\" --",
     "build-localhost": "vite build --mode localhost",
