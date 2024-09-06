@@ -1,9 +1,19 @@
 # my-vue-app
 
 ```sh
-docker run --name redisserver -d -p 6379:6379 redis
-docker image build -t netcore-events-backend:1.0.3 .
-docker container run -d --name netcore-events-backend -p 8082:80 netcore-events-backend:1.0.3
+docker rm vue3-events-app-backend
+
+docker network create --driver bridge backend-bridge-network
+
+docker run --name redisserver -d --network=backend-bridge-network -p 6379:6379 redis
+
+docker build -t vue3-events-app-backend:8.0.1 .
+docker run -d --network=backend-bridge-network --name vue3-events-app-backend -p 8086:8080 vue3-events-app-backend:8.0.1
+docker container logs vue3-events-app-backend
+
+
+
+
 ```
 
 # event list

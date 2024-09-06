@@ -1,5 +1,5 @@
 # Use the official .NET Core SDK image for building
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # Copy the project files and restore dependencies
@@ -10,7 +10,7 @@ RUN dotnet restore
 RUN dotnet publish -c Release -o out
 
 # Use the smaller runtime image for deployment
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
 # Copy the built application from the build stage
