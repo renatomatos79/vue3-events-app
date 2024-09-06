@@ -22,7 +22,7 @@ module.exports = {
     // Disable the rule for multi-word component names
     'vue/multi-word-component-names': 'off',
     // Other custom rules
-    'no-console': 'warn',
-    'no-debugger': 'warn'
+    'no-console': 'off',
+    'no-debugger': 'off'
   }
 }

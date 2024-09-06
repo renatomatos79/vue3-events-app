@@ -26,10 +26,41 @@ npm install
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Type-Check, Compile and Minify for Production using mock data
 
 ```sh
-npm run build
+npm run build-mock
+```
+
+### Stoping and Deleting docker container
+
+```sh
+docker stop vue3-events-app-frontend 
+docker rm vue3-events-app-frontend 
+```
+
+### Building frontend docker image
+
+```sh
+Linux:
+export OS_BASE_URL="http://example.com"
+
+Windows:
+set OS_BASE_URL=http://example.com
+
+npm run build-docker
+docker build -t vue3-events-app-frontend:3.0.2 .
+docker run -d --name vue3-events-app-frontend -p 8085:80 vue3-events-app-frontend:3.0.2
+docker container logs vue3-events-app-frontend
+```
+
+### Deploy the image to docker hub
+
+```sh
+docker login
+docker tag vue3-events-app-frontend:3.0.2 renatomatos79/aws-udemy:vue3-events-app-frontend-3.0.2
+docker push renatomatos79/aws-udemy:vue3-events-app-frontend-3.0.2
+docker container run -d --name vue3-events-app-frontend-3.0.2 -p 80:80 renatomatos79/aws-udemy:vue3-events-app-frontend-3.0.2
 ```
 
 ### Run Unit Tests with [Vitest](https://vitest.dev/)

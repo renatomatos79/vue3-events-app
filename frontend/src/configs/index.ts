@@ -5,5 +5,7 @@ export class Configs {
   constructor() {
     this.baseURL = import.meta.env.VITE_APP_BASE_URL
     this.isMock = import.meta.env.VITE_APP_IS_MOCK === 'true'
+
+    console.log("Configs.baseURL: ", this.baseURL)
   }
 }
