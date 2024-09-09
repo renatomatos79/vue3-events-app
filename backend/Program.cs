@@ -28,10 +28,12 @@ builder.Services.AddSingleton<ICacheManager>(sp =>
     // Default is Redis Server (or Container Server)
     if (builder.GetRedisHostType() == eventsapi.Cache.CacheTypeEnum.RedisServer) 
     {
+        Console.WriteLine("Starting CacheManager");
         var redisClient = new RedisManagerPool(host);
         return new CacheManager(redisClient);
     }
     // Amazon ElasticCache
+    Console.WriteLine("Starting ElasticCacheManager");
     return new ElasticCacheManager(host);
 });
 
