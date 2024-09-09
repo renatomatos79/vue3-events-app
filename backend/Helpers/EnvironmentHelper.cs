@@ -6,13 +6,16 @@ public static class EnvironmentHelper {
 
     public static string GetValue(this WebApplicationBuilder builder, string variableName, string settingsKey, string defaultValue = "")
     {
+        Console.WriteLine($"GetValue VariableName: {variableName} SettingsKey: {settingsKey}");
         try 
         {
-            return Environment.GetEnvironmentVariable(variableName) ?? builder.Configuration[settingsKey] ?? defaultValue;
+            var value = Environment.GetEnvironmentVariable(variableName) ?? builder.Configuration[settingsKey] ?? defaultValue;
+            Console.WriteLine($"GetValue VariableName: {variableName} SettingsKey: {settingsKey} value: {value}");
+            return value;
         } 
         catch (Exception ex) 
         {
-            Console.WriteLine($"EnvironmentHelper.GetValue VariableName: {variableName} SettingsKey: {settingsKey} Error: {ex}");
+            Console.WriteLine($"GetValue VariableName: {variableName} SettingsKey: {settingsKey} Error: {ex}");
         }
         return defaultValue;
         
