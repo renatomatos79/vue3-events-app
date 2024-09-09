@@ -2,7 +2,7 @@ namespace eventsapi;
 
 public class CacheObject<T>
 {
-    public CacheObject(T item, int cacheLifeTimeInSeconds)
+    public CacheObject(T item, long cacheLifeTimeInSeconds)
     {
         this.Item = item;
         this.CreatedOn = DateTime.Now;
@@ -10,7 +10,7 @@ public class CacheObject<T>
         this.ExpiresOn = this.CreatedOn.AddSeconds(cacheLifeTimeInSeconds);
     }
     public T Item { get; set; }
-    public int LifeTimeInSeconds  { get; set;  }
+    public long LifeTimeInSeconds  { get; set;  }
     public long MaxAgeInSeconds 
     {
         get

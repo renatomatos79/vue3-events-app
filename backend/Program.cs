@@ -25,8 +25,14 @@ builder.Services.AddScoped<ITokenService, TokenService>(sp =>
 builder.Services.AddSingleton<ICacheManager>(sp =>
 {
     var host = builder.GetRedisHost();
-    var redisClient = new RedisManagerPool(host);
-    return new CacheManager(redisClient);
+    // Default is Redis Server (or Container Server)
+    if (builder.GetRedisHostType() == eventsapi.Cache.CacheTypeEnum.RedisServer) 
+    {
+        var redisClient = new RedisManagerPool(host);
+        return new CacheManager(redisClient);
+    }
+    // Amazon ElasticCache
+    return new ElasticCacheManager(host);
 });
 
 builder.Services.AddAuthentication(options =>

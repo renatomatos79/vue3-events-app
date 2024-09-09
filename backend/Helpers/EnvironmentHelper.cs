@@ -1,3 +1,5 @@
+using eventsapi.Cache;
+
 namespace eventsapi;
 
 public static class EnvironmentHelper {
@@ -34,5 +36,11 @@ public static class EnvironmentHelper {
     public static string GetRedisHost(this WebApplicationBuilder builder)
     {
         return GetValue(builder, "REDIS_HOST", "Redis:Host", "redisserver:6379");
+    }
+
+    public static CacheTypeEnum GetRedisHostType(this WebApplicationBuilder builder)
+    {
+        var redisType = GetValue(builder, "REDIS_HOST_TYPE", "Redis:Type", CacheType.RedisServer.ToString());
+        return CacheType.FromString(redisType).ToCacheType();
     }
 }

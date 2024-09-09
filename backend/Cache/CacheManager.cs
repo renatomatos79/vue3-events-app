@@ -9,7 +9,7 @@ public class CacheManager : ICacheManager
     {
         this.redisClientsManager = redisClientsManager;
     }
-    private void AddKey(string key, string value, int expiresInSeconds)
+    private void AddKey(string key, string value, long expiresInSeconds)
     {
         using (var redis = redisClientsManager.GetClient())
         {
@@ -23,13 +23,13 @@ public class CacheManager : ICacheManager
             return redis.Get<string>(key);
         }
     }
-    public void Add<T>(string key, T value, int expiresInSeconds)
+    public void Add<T>(string key, T value, long expiresInSeconds)
     {
         var item = new CacheObject<T>(value, expiresInSeconds);
         var json = Newtonsoft.Json.JsonConvert.SerializeObject(item);
         AddKey(key, json, expiresInSeconds);
     }
-    public CacheObject<T> Get<T>(string key)
+    public CacheObject<T>? Get<T>(string key)
     {
         var value = GetKey(key);
         if (string.IsNullOrEmpty(value))
