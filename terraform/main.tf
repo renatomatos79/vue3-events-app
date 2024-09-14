@@ -14,10 +14,6 @@ data "aws_availability_zones" "available" {
   }
 }
 
-locals {
-  cluster_name = "udemy-eks-dev"
-}
-
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.8.1"
@@ -32,7 +28,7 @@ module "vpc" {
 
   enable_nat_gateway   = true
   single_nat_gateway   = true
-  enable_dns_hostnames = true
+  enable_dns_hostnames = true  
 
   public_subnet_tags = {
     "kubernetes.io/role/elb" = 1
@@ -47,7 +43,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.8.5"
 
-  cluster_name    = local.cluster_name
+  cluster_name    = var.cluster_name
   cluster_version = "1.29"
 
   cluster_endpoint_public_access           = true
