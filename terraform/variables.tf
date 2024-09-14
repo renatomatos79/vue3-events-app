@@ -11,5 +11,5 @@ variable "region" {
 variable "cluster_name" {
   description = "Description of the cluster"
   type        = string
-  default     = "udemy-eks-dev"
+  default     = "udemy-eks-cluster"
 }
