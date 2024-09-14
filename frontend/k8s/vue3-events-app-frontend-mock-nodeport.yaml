@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vue3-events-app-frontend-mock-nodeport
+spec:
+  # ClusterIP: sera acessado apenas dentro do Cluster (private services)
+  # LoadBalancer: acessado externamente atraves de um NLB
+  # NodePort: apenas exposto para internet na porta citada em "port"
+  type: NodePort
+  selector:
+    app: vue3-events-app-frontend-mock
+  ports:
+    - protocol: TCP
+      port: 80
+      # para onde sera redirecionado o trafico
+      targetPort: 80
+      # porta para acesso ao servico
+      nodePort: 30001

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vue3-events-app-frontend-mock-depl
+  labels:
+    app: vue3-events-app-frontend-mock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vue3-events-app-frontend-mock
+  template:
+    metadata:
+      labels:
+        app: vue3-events-app-frontend-mock
+    spec:
+      containers:
+        - name: vue3-events-app-frontend-mock
+          image: 992382569486.dkr.ecr.us-east-1.amazonaws.com/vue3-events-app-frontend-mock:3.0.1
+          ports:
+            - containerPort: 80
