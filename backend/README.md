@@ -22,11 +22,11 @@ docker run -d --network=backend-bridge-network --name vue3-events-app-backend-8.
 docker container logs vue3-events-app-backend
 ```
 
-# Running backend using Amazon Elastic Cache
+# Running backend using Amazon Elastic Cache from ECR
 
 ```sh
-docker container rm vue3-events-app-backend-8.0.1
-docker run -d --name vue3-events-app-backend-8.0.1 -e REDIS_HOST_TYPE=REDIS_AMAZON_OSS -e REDIS_HOST='clustercfg.awsredis.uzxmqs.use1.cache.amazonaws.com:6379' -p 8086:8080 vue3-events-app-backend:8.0.1
+docker container rm vue3-events-app-backend-8.0.1 --force
+docker run -d --name vue3-events-app-backend-8.0.1 -e REDIS_HOST_TYPE=REDIS_AMAZON_OSS -e REDIS_HOST='clustercfg.awsredis.uzxmqs.use1.cache.amazonaws.com:6379' -p 8086:8080 992382569486.dkr.ecr.us-east-1.amazonaws.com/aws-udemy:vue3-events-app-backend-8.0.1
 docker container logs vue3-events-app-backend-8.0.1
 ```
 
