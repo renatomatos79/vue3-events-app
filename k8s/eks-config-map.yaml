@@ -1,0 +1,11 @@
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+apiVersion: v1
+data:
+  mapUsers: |
+    - userarn: arn:aws:iam::992382569486:user/eks-user
+      username: eks-user
+      groups:
+        - system:masters
