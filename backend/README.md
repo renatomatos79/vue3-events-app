@@ -15,10 +15,10 @@ docker run --name redisserver -d --network=backend-bridge-network -p 6379:6379 r
 
 ```sh
 docker build -t vue3-events-app-backend:8.0.1 .
-docker tag vue3-events-app-backend:8.0.1 renatomatos79/aws-udemy:vue3-events-app-backend-8.0.1
+docker tag vue3-events-app-backend:8.0.1 renatomatos79/vue3-events-app-backend:8.0.1
 docker login
-docker push  renatomatos79/aws-udemy:vue3-events-app-backend-8.0.1
-docker run -d --network=backend-bridge-network --name vue3-events-app-backend-8.0.1 -p 8086:8080 renatomatos79/aws-udemy:vue3-events-app-backend-8.0.1
+docker push renatomatos79/vue3-events-app-backend:8.0.1
+docker run -d --network=backend-bridge-network --name vue3-events-app-backend-8.0.1 -p 8080:8080 renatomatos79/vue3-events-app-backend:8.0.1
 docker container logs vue3-events-app-backend
 ```
 
